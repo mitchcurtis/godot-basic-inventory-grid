@@ -2,9 +2,10 @@ extends Control
 
 # The width and height of each item.
 export var item_size = 64
-# Pretend that our inventory has 100 items.
-export var item_count = 100
+# Our mock inventory has 20 items out of a possible 100.
+export var item_count = 20
 export var column_count = 6 setget set_column_count, get_column_count
+const max_slots = 100
 
 # Notes:
 #
@@ -21,7 +22,7 @@ export var column_count = 6 setget set_column_count, get_column_count
 
 func _ready():
     resize_grid()
-    fill_grid()
+    update_slots()
 
 func scroll_bar_width():
     return get_parent_control().get_v_scrollbar().rect_size.x
@@ -32,49 +33,54 @@ func get_column_count():
 func set_column_count(count):
     column_count = count
     resize_grid()
-    fill_grid()
+    update_slots()
 
 func get_row_count():
     # Make sure we cast the result to an int, otherwise we have extra, unused vertical space
     # at the bottom of the grid.
-    return int(item_count / get_column_count())
+    return int(max_slots / get_column_count())
 
 func resize_grid():
     rect_min_size.x = get_column_count() * item_size
     rect_min_size.y = get_row_count() * item_size
 
-func fill_grid():
-    # Clear existing items.
-    while (get_child_count() > 0):
-        remove_child(get_child(0))
+func index_to_pos(index):
+    var columns = get_column_count()
+    return Vector2(int(index % columns), int(index / columns))
     
+func update_slots():
     var rows = get_row_count()
     var columns = get_column_count()
     print("displaying " + str(rows) + " rows and " + str(columns) + " columns")
     
-    for y in range(0, rows):
-        for x in range(0, columns):
-            var grid_item = preload("res://InventoryGridItem.tscn").instance()
-            grid_item.rect_position = Vector2(x * item_size, y * item_size)
+    for slot_index in range(0, max_slots):
+        if get_child_count() - 1 < slot_index:
+            # No slot here yet; need to create it.
+            var grid_item = preload("res://InventoryGridSlot.tscn").instance()
+            grid_item.rect_position = index_to_pos(slot_index) * item_size
             add_child(grid_item)
+            
+        var grid_item = get_child(slot_index)
+        if (item_count > slot_index):
+            # This slot is occupied.
+            grid_item.texture = load("res://icon.png")
+        else:
+            grid_item.texture = load("res://slot.png")
         
 func _input(event):
     if event.is_action("give_item") and event.is_pressed():
         # Give a row of items to make testing quicker.
         item_count += get_column_count()
-        resize_grid()
-        fill_grid()
+        update_slots()
     elif event is InputEventMouseButton and !event.is_pressed():
         var item_column = event.position.x / item_size
         if (item_column >= get_column_count()):
-            # The click is outside of us (can happen when the parent's width
-            # is not a multiple of item_size, for example).
+            # The click is outside of us.
             return
             
         var item_row = event.position.y / item_size
         if (item_row >= get_row_count()):
-            # Should probably never happen since we set our own (perfect) height,
-            # but just to be safe..
+            # The click is outside of us.
             return
         
         var item_index = int(item_row) * get_column_count() + int(item_column)
