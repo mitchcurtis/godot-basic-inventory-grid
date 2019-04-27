@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://InventoryGrid.gd" type="Script" id=1]
+
+[node name="Scene" type="Node2D"]
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HUD"]
+margin_right = 396.0
+margin_bottom = 463.0
+
+[node name="InventoryGrid" type="Control" parent="HUD/ScrollContainer"]
+script = ExtResource( 1 )
+
