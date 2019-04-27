@@ -1,16 +1,20 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://InventoryGrid.gd" type="Script" id=1]
+[ext_resource path="res://ScrollContainer.gd" type="Script" id=1]
+[ext_resource path="res://InventoryGrid.gd" type="Script" id=2]
 
 [node name="Scene" type="Node2D"]
 
 [node name="HUD" type="CanvasLayer" parent="."]
 
 [node name="ScrollContainer" type="ScrollContainer" parent="HUD"]
-margin_right = 384.0
+margin_right = 396.0
 margin_bottom = 463.0
 scroll_horizontal_enabled = false
+script = ExtResource( 1 )
 
 [node name="InventoryGrid" type="Control" parent="HUD/ScrollContainer"]
-script = ExtResource( 1 )
+margin_right = 396.0
+size_flags_horizontal = 3
+script = ExtResource( 2 )
 
