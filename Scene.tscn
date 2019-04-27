@@ -7,8 +7,9 @@
 [node name="HUD" type="CanvasLayer" parent="."]
 
 [node name="ScrollContainer" type="ScrollContainer" parent="HUD"]
-margin_right = 396.0
+margin_right = 384.0
 margin_bottom = 463.0
+scroll_horizontal_enabled = false
 
 [node name="InventoryGrid" type="Control" parent="HUD/ScrollContainer"]
 script = ExtResource( 1 )

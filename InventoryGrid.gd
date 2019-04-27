@@ -9,11 +9,9 @@ export var item_count = 100
 # - Set rect_min_size on the child of a ScrollContainer to affect its size.
 #   When either the width or height (or both) are bigger than that of
 #   the ScrollContainer itself, that dimension will get a scroll bar.
-#   While this works when set in the editor, it doesn't when set in _ready(),
-#   so we use rect_size there in addition.
-#   (See: https://github.com/godotengine/godot/issues/28463)
-# - There is a bug with scroll bars on ScrollContainers:
-#   https://github.com/godotengine/godot/issues/28464
+# - We disable horizontal scrolling via the editor since we don't need it.
+#   In doing so, we also avoid this bug: https://github.com/godotengine/godot/issues/28464
+#   Set horizontal_scroll_enabled if doing it through code.
 
 func _ready():
     resize_grid()
@@ -24,7 +22,7 @@ func scroll_bar_width():
 
 func column_count():
     # Calculate the number of columns based on our width and the size of each item.
-    return int(rect_size.x / item_size)
+    return int(rect_min_size.x / item_size)
     
 func row_count():
     # The parent (ScrollContainer) determines our width, but we choose our height.
@@ -34,17 +32,11 @@ func row_count():
 
 func resize_grid():
     # We don't care how wide we are; that's up to our parent.
-    # However, because of https://github.com/godotengine/godot/issues/28464,
-    # the parent needs to ensure that:
-    # - Its width (minus the scroll bar width) is a multiple of item_size,
-    #   because otherwise there will be extra, unused space on the right-hand side.
-    # - Its width accounts for the width of its vertical scroll bar,
-    #   because otherwise it will be covering the items on the right-hand side
-    #   when shown.
+    # However, the parent needs to ensure that its width is a multiple of item_size,
+    # because otherwise there will be extra, unused space on the right-hand side.
     # For example, if item_size is 64 and we want to display 6 columns,
-    # the ScrollContainer's width should be 384 (6 * 64) + 12 (scroll bar width) = 396.
-    rect_size.x = get_parent_control().rect_size.x - scroll_bar_width()
-    rect_min_size.x = rect_size.x
+    # the ScrollContainer's width should be 384.
+    rect_min_size.x = get_parent_control().rect_size.x
     # We do control our height, though.
     rect_min_size.y = row_count() * item_size
 
