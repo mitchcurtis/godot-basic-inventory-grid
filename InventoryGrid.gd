@@ -27,7 +27,6 @@ func scroll_bar_width():
     return get_parent_control().get_v_scrollbar().rect_size.x
 
 func get_column_count():
-    # Calculate the number of columns based on our width and the size of each item.
     return column_count
     
 func set_column_count(count):
@@ -36,7 +35,6 @@ func set_column_count(count):
     fill_grid()
 
 func get_row_count():
-    # The parent (ScrollContainer) determines our width, but we choose our height.
     # Make sure we cast the result to an int, otherwise we have extra, unused vertical space
     # at the bottom of the grid.
     return int(item_count / get_column_count())
