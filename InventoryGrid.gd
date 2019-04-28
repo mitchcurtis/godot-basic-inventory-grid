@@ -73,12 +73,17 @@ func _input(event):
         item_count += get_column_count()
         update_slots()
     elif event is InputEventMouseButton and !event.is_pressed():
-        var item_column = event.position.x / item_size
+        # While not necessary in this particular example,
+        # if ScrollContainer is moved within e.g. a popup,
+        # the event coordinates seem to be made global,
+        # so it's a good idea to ensure that they are always local.
+        var mouse_pos = make_input_local(event).position
+        var item_column = mouse_pos.x / item_size
         if (item_column >= get_column_count()):
             # The click is outside of us.
             return
             
-        var item_row = event.position.y / item_size
+        var item_row = mouse_pos.y / item_size
         if (item_row >= get_row_count()):
             # The click is outside of us.
             return
