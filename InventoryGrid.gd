@@ -72,7 +72,7 @@ func _input(event):
         # Give a row of items to make testing quicker.
         item_count += get_column_count()
         update_slots()
-    elif event is InputEventMouseButton and !event.is_pressed():
+    elif event is InputEventMouseButton:
         # While not necessary in this particular example,
         # if ScrollContainer is moved within e.g. a popup,
         # the event coordinates seem to be made global,
@@ -89,13 +89,21 @@ func _input(event):
             return
         
         var item_index = int(item_row) * get_column_count() + int(item_column)
-        if (event.button_index == BUTTON_LEFT):
-            item_left_clicked(item_index)
-        elif (event.button_index == BUTTON_RIGHT):
-            item_right_clicked(item_index)
+        
+        if !event.is_pressed():
+            if (event.button_index == BUTTON_LEFT):
+                item_left_clicked(item_index)
+            elif (event.button_index == BUTTON_RIGHT):
+                item_right_clicked(item_index)
+        elif (event.doubleclick):
+            item_double_clicked(item_index)
+            
             
 func item_left_clicked(index):
     print("item at index " + str(index) + " was left clicked")
     
 func item_right_clicked(index):
     print("item at index " + str(index) + " was right clicked")
+    
+func item_double_clicked(index):
+    print("item at index " + str(index) + " was double clicked")
